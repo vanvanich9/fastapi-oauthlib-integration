@@ -1,0 +1,260 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/api/oauth2/authorize": {
+            "get": {
+                "tags": [
+                    "OAuth2"
+                ],
+                "summary": "Redirect To Auth",
+                "operationId": "redirect_to_auth_api_oauth2_authorize_get",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "307": {
+                        "description": "Successful Response"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/oauth2/token": {
+            "get": {
+                "tags": [
+                    "OAuth2"
+                ],
+                "summary": "Fetch Token",
+                "operationId": "fetch_token_api_oauth2_token_get",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FetchToken"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "title": "Response Fetch Token Api Oauth2 Token Get",
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/TokenResponse"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/ErrorResponse"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/oauth2/incomplete": {
+            "get": {
+                "tags": [
+                    "OAuth2"
+                ],
+                "summary": "Incomplete Fetch",
+                "operationId": "incomplete_fetch_api_oauth2_incomplete_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthRequest": {
+                "title": "AuthRequest",
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "title": "Scope",
+                        "type": "array",
+                        "items": {},
+                        "default": []
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "title": "ErrorResponse",
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ResponseStatus"
+                            }
+                        ],
+                        "default": "ERROR"
+                    },
+                    "message": {
+                        "title": "Message",
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            },
+            "FetchToken": {
+                "title": "FetchToken",
+                "required": [
+                    "code",
+                    "state"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "title": "Code",
+                        "type": "string"
+                    },
+                    "state": {
+                        "title": "State",
+                        "type": "string"
+                    }
+                }
+            },
+            "HTTPValidationError": {
+                "title": "HTTPValidationError",
+                "type": "object",
+                "properties": {
+                    "detail": {
+                        "title": "Detail",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        }
+                    }
+                }
+            },
+            "ResponseStatus": {
+                "title": "ResponseStatus",
+                "enum": [
+                    "OK",
+                    "ERROR"
+                ],
+                "description": "An enumeration."
+            },
+            "TokenResponse": {
+                "title": "TokenResponse",
+                "required": [
+                    "access_token",
+                    "expires_in",
+                    "token_type"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ResponseStatus"
+                            }
+                        ],
+                        "default": "ERROR"
+                    },
+                    "access_token": {
+                        "title": "Access Token",
+                        "type": "string"
+                    },
+                    "expires_in": {
+                        "title": "Expires In",
+                        "type": "integer"
+                    },
+                    "token_type": {
+                        "title": "Token Type",
+                        "type": "string"
+                    },
+                    "refresh_token": {
+                        "title": "Refresh Token",
+                        "type": "string"
+                    },
+                    "scope": {
+                        "title": "Scope",
+                        "type": "array",
+                        "items": {}
+                    }
+                }
+            },
+            "ValidationError": {
+                "title": "ValidationError",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "loc": {
+                        "title": "Location",
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        }
+                    },
+                    "msg": {
+                        "title": "Message",
+                        "type": "string"
+                    },
+                    "type": {
+                        "title": "Error Type",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
