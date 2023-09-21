@@ -2,18 +2,9 @@ from pydantic import BaseModel
 from .common import OKResponse
 
 
-class AuthRequest(BaseModel):
-    scope: list = []
-
-
-class FetchToken(BaseModel):
-    code: str
-    state: str
-
-
 class TokenResponse(OKResponse):
     access_token: str
-    expires_in: int
     token_type: str
+    expires_in: int = -1
     refresh_token: str | None = None
     scope: list | None = None
